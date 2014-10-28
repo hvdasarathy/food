@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import statsmodels.stats.diagnostic as sm
 
 years = [i for i in range(1987, 2014) if i != 1996]
 la_total = [3958, 4422, 4927, 5236, 5044, 4808, 4725, 4731, 4651, 4952, 5060, 5204, 5490, 5737, 5883, 6402, 7194, 7062, 7222, 7785, 7641, 7531, 7182, 7148, 7504, 7510]
@@ -99,7 +100,23 @@ print "Mean Error of Last 5 Years in LA = "+ str(np.mean(laerr_away[-5:]))
 #Compute 'growth rate' in away from home spending each year.
 la_away_gr = [la_away[i] - la_away[i - 1] if years[i] - years[i - 1] == 1 else (la_away[i] - la_away[i - 1])/2.0 for i in range(1, len(years))]
 print la_away_gr
-print np.mean(la_away_gr)
+
+la_away_gr_mean = np.mean(la_away_gr)
+la_away_gr_var = np.var(la_away_gr)
+
+plt.hist(la_away_gr)
+plt.title("Histogram of Year on Year Differences in Spending Away from Home in LA")
+plt.show()
+
+print "Annual Growth Rate Average = " + str(la_away_gr_mean)
+print "Annual Growth Rate Variance = " + str(la_away_gr_var)
+print "Annual Growth Rate Standard Deviation = " + str(np.sqrt(la_away_gr_var))
+
+la_gr_ksstat = sm.lillifors(la_away_gr)[0]
+if la_gr_ksstat <= 1.035:
+    #This number is the 0.01 significance level critical value to apply the K-S Test on a normal population with estimated mean and variance
+    print "LA Growth fits Normal Dist."
+
 
 print "End LA"
 #<<<<End LA>>>>
@@ -113,6 +130,7 @@ sfreg_param_away = np.polyfit(years, sf_away, 1)
 
 
 #Use these parameters to generate points on the regression line
+sfreg_values_total = [sfreg_param_total[0] *i + sfreg_param_total[1] for i in years]
 sfreg_values_away = [sfreg_param_away[0] * i + sfreg_param_away[1] for i in years]
 
 #<<<<Plot Regression Line of Total Spending>>>>
@@ -171,6 +189,19 @@ plt.show()
 #Compute 'growth rate' in away from home spending each year.
 sf_away_gr = [sf_away[i] - sf_away[i - 1] if years[i] - years[i - 1] == 1 else (sf_away[i] - sf_away[i - 1])/2.0 for i in range(1, len(years))]
 print sf_away_gr
+sf_away_gr_mean = np.mean(sf_away_gr)
+sf_away_gr_var = np.var(sf_away_gr)
+plt.hist(sf_away_gr)
+plt.title("Histogram of Year on Year Differences in Spending Away from Home in SF")
+plt.show()
+sf_gr_ksstat = sm.lillifors(sf_away_gr)[0]
+
+if sf_gr_ksstat <= 1.035:
+    print "SF Growth fits Normal Dist."
+
+print "Annual Growth Rate Average = " + str(sf_away_gr_mean)
+print "Annual Growth Rate Variance = " + str(sf_away_gr_var)
+print "Annual Growth Rate Standard Deviation = " + str(np.sqrt(sf_away_gr_var))
 
 print "End SF"
 #<<<<Plot Showing fraction of Food Spending that is Away From Home>>>>
