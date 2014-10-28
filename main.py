@@ -66,6 +66,7 @@ for i in range(len(years)):
     if laerr_total[i] >= laavg_err_total:
         laexceptions_total = laexceptions_total + 1
 
+#Output the values that give information.
 print lareg_param_total[0]*2014 + lareg_param_total[1]
 print "Total Error = " + str(laavg_err_total)
 print "Total Food Expenditure Exceptions in LA = " + str(laexceptions_total)
@@ -104,6 +105,7 @@ print la_away_gr
 la_away_gr_mean = np.mean(la_away_gr)
 la_away_gr_var = np.var(la_away_gr)
 
+#Histogram to visually check if the growth fits a normal distribution.
 plt.hist(la_away_gr)
 plt.title("Histogram of Year on Year Differences in Spending Away from Home in LA")
 plt.show()
@@ -112,7 +114,9 @@ print "Annual Growth Rate Average = " + str(la_away_gr_mean)
 print "Annual Growth Rate Variance = " + str(la_away_gr_var)
 print "Annual Growth Rate Standard Deviation = " + str(np.sqrt(la_away_gr_var))
 
+#Generate KS-Test Statistic for estimated parameters using statsmodels model
 la_gr_ksstat = sm.lillifors(la_away_gr)[0]
+
 if la_gr_ksstat <= 1.035:
     #This number is the 0.01 significance level critical value to apply the K-S Test on a normal population with estimated mean and variance
     print "LA Growth fits Normal Dist."
@@ -155,6 +159,7 @@ for i in range(len(years)):
     if sferr_total[i] >= sfavg_err_total:
         sfexceptions_total = sfexceptions_total + 1
 
+#Similar analysis values as seen previously.
 print sfreg_param_total[0]*2014 + sfreg_param_total[1]
 print "Total Error = " + str(sfavg_err_total)
 print "Total Food Expenditure Exceptions in SF = " + str(sfexceptions_total)
@@ -189,11 +194,17 @@ plt.show()
 #Compute 'growth rate' in away from home spending each year.
 sf_away_gr = [sf_away[i] - sf_away[i - 1] if years[i] - years[i - 1] == 1 else (sf_away[i] - sf_away[i - 1])/2.0 for i in range(1, len(years))]
 print sf_away_gr
+
+
 sf_away_gr_mean = np.mean(sf_away_gr)
 sf_away_gr_var = np.var(sf_away_gr)
+
+#Histogram to visually check for Normal Distribution
 plt.hist(sf_away_gr)
 plt.title("Histogram of Year on Year Differences in Spending Away from Home in SF")
 plt.show()
+
+#Generate KS-Test statistic with estimated parameters.
 sf_gr_ksstat = sm.lillifors(sf_away_gr)[0]
 
 if sf_gr_ksstat <= 1.035:
